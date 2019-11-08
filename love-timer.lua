@@ -58,9 +58,6 @@ end
 -- Pauses the timer
 function timer:pause ()
   self.timestamp.pause = love.timer.getTime()
-  -- if self.timestamp.time ~= -1 then
-  --   self.timestamp.finish = 0
-  -- end
   self.status = "pause"
 end
 
@@ -75,8 +72,9 @@ end
 -- In "timer" mode returns true if timer finished, false otherwise.
 -- In "counter" mode returns time from start.
 --
--- @return  bool "finished?" or time from start (in seconds)
+-- @return  bool "finished?" or time from start (in seconds), nil if not running
 function timer:check ()
+  if self.timestamp.start == 0 then return nil end
   if self.timestamp.time == -1 then
     return (love.timer.getTime() - self.timestamp.start)
   else
@@ -89,7 +87,7 @@ end
 --
 -- @return  time from start or remaining time (in seconds), nil if not running
 function timer:time ()
-  if self.timestamp.start == 0 then return 0 end
+  if self.timestamp.start == 0 then return nil end
   if self.timestamp.time == -1 then
     if self.timestamp.pause == 0 then
       return (love.timer.getTime() - self.timestamp.start)
@@ -106,10 +104,8 @@ end
 --
 -- @param   time  nil for "counter" mode, number for "timer" mode
 function timer:set (time)
-  if type(time) == "number" then
-    if not (time < 0) then
-      self.timestamp.time = time
-    end
+  if type(time) == "number" and (tonumber(time) >= 0) then
+    self.timestamp.time = time
   elseif time == nil then
     self.timestamp.time = -1
   else
