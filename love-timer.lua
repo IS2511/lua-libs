@@ -13,33 +13,7 @@ local timer = { -- ~in seconds, floating point number
 }
 -- If time is -1, then just count
 
-local mt = {}
-
--- In "timer" mode returns time left.
--- In "counter" mode returns time from start.
---
--- @param   tmr  self
--- @return       time from start or remaining time (in seconds)
-mt.__len = function (tmr)
-  if tmr.timestamp.time == -1 then
-    return (love.timer.getTime() - tmr.timestamp.start)
-  else
-    return (tmr.timestamp.finish - love.timer.getTime())
-  end
-end
-
--- In "timer" mode returns true if timer finished, false otherwise.
--- In "counter" mode returns time from start.
---
--- @param   tmr  self
--- @return       bool "finished?" or time from start (in seconds)
-mt.__call = function (tmr)
-  if tmr.timestamp.time == -1 then
-    return (love.timer.getTime() - tmr.timestamp.start)
-  else
-    return (love.timer.getTime() > tmr.timestamp.finish)
-  end
-end
+local mt = {} -- Metatable
 
 -- For "counter" mode just pass nothing (nil).
 -- For "timer" mode pass a number to set the timer.
@@ -113,7 +87,7 @@ end
 -- In "timer" mode returns time left.
 -- In "counter" mode returns time from start.
 --
--- @return  time from start or remaining time (in seconds)
+-- @return  time from start or remaining time (in seconds), nil if not running
 function timer:time ()
   if self.timestamp.start == 0 then return 0 end
   if self.timestamp.time == -1 then
@@ -123,9 +97,7 @@ function timer:time ()
       return (self.timestamp.pause - self.timestamp.start)
     end
   else
-    -- if self.timestamp.pause == 0 then
     return (self.timestamp.finish - love.timer.getTime())
-    -- return (love.timer.getTime() - tmr.timestamp.start)
   end
 end
 
@@ -143,6 +115,24 @@ function timer:set (time)
   else
     error("Argument must be a positive number or nil")
   end
+end
+
+-- In "timer" mode returns time left.
+-- In "counter" mode returns time from start.
+--
+-- @param   tmr  self
+-- @return       time from start or remaining time (in seconds)
+mt.__len = function (tmr)
+  return tmr:time()
+end
+
+-- In "timer" mode returns true if timer finished, false otherwise.
+-- In "counter" mode returns time from start.
+--
+-- @param   tmr  self
+-- @return       bool "finished?" or time from start (in seconds)
+mt.__call = function (tmr)
+  return tmr:check()
 end
 
 
