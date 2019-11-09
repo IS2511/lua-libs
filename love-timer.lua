@@ -9,7 +9,7 @@ local timer = { -- ~in seconds, floating point number
     pause = 0,
     finish = math.huge
   },
-  status = "stop"
+  state = "stop"
 }
 -- If time is -1, then just count
 
@@ -52,13 +52,13 @@ function timer:start ()
     end
     self.timestamp.pause = 0
   end
-  self.status = "running"
+  self.state = "running"
 end
 
 -- Pauses the timer
 function timer:pause ()
   self.timestamp.pause = love.timer.getTime()
-  self.status = "pause"
+  self.state = "pause"
 end
 
 -- Stops the timer and resets the time
@@ -66,7 +66,7 @@ function timer:stop ()
   self.timestamp.start = 0
   self.timestamp.pause = 0
   self.timestamp.finish = math.huge
-  self.status = "stop"
+  self.state = "stop"
 end
 
 -- In "timer" mode returns true if timer finished, false otherwise.
