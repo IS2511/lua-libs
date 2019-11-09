@@ -36,7 +36,7 @@ end
 
 -- Starts the timer
 function timer:start ()
-  now = love.timer.getTime()
+  local now = love.timer.getTime()
   if self.timestamp.pause == 0 then
     self.timestamp.start = now
     if self.timestamp.time == -1 then
